@@ -1,0 +1,12 @@
+{
+  "name": "hermesworld",
+  "label": "HermesWorld",
+  "description": "Launch HermesWorld directly from the Hermes dashboard",
+  "icon": "Castle",
+  "version": "0.1.0",
+  "tab": {
+    "path": "/hermesworld",
+    "position": "after:hermes-workspace"
+  },
+  "entry": "dist/index.js"
+}

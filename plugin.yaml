@@ -1,0 +1,5 @@
+name: hermesworld
+version: 0.1.0
+description: Launch HermesWorld directly from the Hermes dashboard
+author: outsourc-e
+kind: standalone
