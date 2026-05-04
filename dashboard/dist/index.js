@@ -158,6 +158,7 @@
       React.createElement('iframe', {
         title: 'HermesWorld',
         src: worldUrl,
+        allow: 'autoplay; microphone; camera; fullscreen',
         style: {
           flex: 1,
           border: 'none',
