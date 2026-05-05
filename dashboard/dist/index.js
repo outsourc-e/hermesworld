@@ -7,8 +7,9 @@
   }
 
   const { React } = sdk;
-  const { useEffect, useMemo, useState, useCallback } = React;
+  const { useMemo, useState, useCallback } = React;
   const LS_KEY = 'hermesworld-plugin:base-url';
+  const ADMIN_KEY = 'hermesworld-plugin:admin-view';
 
   function defaultBaseUrl() {
     const { protocol, hostname } = window.location;
@@ -30,11 +31,19 @@
     });
     const [showSettings, setShowSettings] = useState(false);
     const [draftUrl, setDraftUrl] = useState(baseUrl);
+    const [adminView, setAdminView] = useState(() => {
+      try {
+        return localStorage.getItem(ADMIN_KEY) === '1';
+      } catch {
+        return false;
+      }
+    });
 
     const worldUrl = useMemo(() => {
       const base = normalizeBaseUrl(baseUrl);
-      return base ? `${base}/playground?embed=1` : '';
-    }, [baseUrl]);
+      if (!base) return '';
+      return `${base}/playground?embed=1${adminView ? '&admin=1' : ''}`;
+    }, [baseUrl, adminView]);
 
     const saveUrl = useCallback(() => {
       const next = normalizeBaseUrl(draftUrl);
@@ -47,6 +56,12 @@
 
     const openExternal = () => {
       if (worldUrl) window.open(worldUrl, '_blank', 'noopener,noreferrer');
+    };
+
+    const toggleAdmin = () => {
+      const next = !adminView;
+      setAdminView(next);
+      try { localStorage.setItem(ADMIN_KEY, next ? '1' : '0'); } catch {}
     };
 
     return React.createElement(
@@ -141,6 +156,18 @@
                 cursor: 'pointer',
               },
             }, '⚙'),
+            React.createElement('button', {
+              onClick: toggleAdmin,
+              title: adminView ? 'Disable admin overlay' : 'Enable admin overlay',
+              style: {
+                padding: '2px 6px',
+                fontSize: '10px',
+                background: 'none',
+                color: adminView ? '#facc15' : 'rgba(255,255,255,0.25)',
+                border: 'none',
+                cursor: 'pointer',
+              },
+            }, '🛡'),
             React.createElement('button', {
               onClick: openExternal,
               title: 'Open in new tab',
