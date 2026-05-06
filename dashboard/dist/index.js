@@ -9,12 +9,7 @@
   const { React } = sdk;
   const { useMemo, useState, useCallback } = React;
   const LS_KEY = 'hermesworld-plugin:base-url';
-  const ADMIN_KEY = 'hermesworld-plugin:admin-view';
-
-  function defaultBaseUrl() {
-    const { protocol, hostname } = window.location;
-    return `${protocol}//${hostname}:3002`;
-  }
+  const DEFAULT_BASE_URL = 'https://hermes-world.ai';
 
   function normalizeBaseUrl(value) {
     const trimmed = String(value || '').trim();
@@ -24,44 +19,28 @@
   function HermesWorldPlugin() {
     const [baseUrl, setBaseUrl] = useState(() => {
       try {
-        return normalizeBaseUrl(localStorage.getItem(LS_KEY)) || defaultBaseUrl();
+        return normalizeBaseUrl(localStorage.getItem(LS_KEY)) || DEFAULT_BASE_URL;
       } catch {
-        return defaultBaseUrl();
+        return DEFAULT_BASE_URL;
       }
     });
     const [showSettings, setShowSettings] = useState(false);
     const [draftUrl, setDraftUrl] = useState(baseUrl);
-    const [adminView, setAdminView] = useState(() => {
-      try {
-        return localStorage.getItem(ADMIN_KEY) === '1';
-      } catch {
-        return false;
-      }
-    });
 
     const worldUrl = useMemo(() => {
-      const base = normalizeBaseUrl(baseUrl);
-      if (!base) return '';
-      return `${base}/playground?embed=1${adminView ? '&admin=1' : ''}`;
-    }, [baseUrl, adminView]);
+      const base = normalizeBaseUrl(baseUrl) || DEFAULT_BASE_URL;
+      return `${base}/play/?embed=dashboard&source=hermes-plugin`;
+    }, [baseUrl]);
 
     const saveUrl = useCallback(() => {
-      const next = normalizeBaseUrl(draftUrl);
-      if (next) {
-        setBaseUrl(next);
-        try { localStorage.setItem(LS_KEY, next); } catch {}
-      }
+      const next = normalizeBaseUrl(draftUrl) || DEFAULT_BASE_URL;
+      setBaseUrl(next);
+      try { localStorage.setItem(LS_KEY, next); } catch {}
       setShowSettings(false);
     }, [draftUrl]);
 
     const openExternal = () => {
       if (worldUrl) window.open(worldUrl, '_blank', 'noopener,noreferrer');
-    };
-
-    const toggleAdmin = () => {
-      const next = !adminView;
-      setAdminView(next);
-      try { localStorage.setItem(ADMIN_KEY, next ? '1' : '0'); } catch {}
     };
 
     return React.createElement(
@@ -93,11 +72,11 @@
             },
             React.createElement('span', {
               style: { fontSize: '11px', color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' },
-            }, 'Workspace URL:'),
+            }, 'HermesWorld URL:'),
             React.createElement('input', {
               value: draftUrl,
               onChange: (e) => setDraftUrl(e.target.value),
-              placeholder: defaultBaseUrl(),
+              placeholder: DEFAULT_BASE_URL,
               style: {
                 flex: 1,
                 padding: '4px 8px',
@@ -156,18 +135,6 @@
                 cursor: 'pointer',
               },
             }, '⚙'),
-            React.createElement('button', {
-              onClick: toggleAdmin,
-              title: adminView ? 'Disable admin overlay' : 'Enable admin overlay',
-              style: {
-                padding: '2px 6px',
-                fontSize: '10px',
-                background: 'none',
-                color: adminView ? '#facc15' : 'rgba(255,255,255,0.25)',
-                border: 'none',
-                cursor: 'pointer',
-              },
-            }, '🛡'),
             React.createElement('button', {
               onClick: openExternal,
               title: 'Open in new tab',

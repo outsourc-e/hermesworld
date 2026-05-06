@@ -1,6 +1,6 @@
 # HermesWorld — Hermes Dashboard Plugin
 
-Embed [HermesWorld](https://github.com/outsourc-e/hermes-workspace) (the playground/training-grounds surface) directly as a tab in your Hermes Agent dashboard.
+Embed [HermesWorld](https://hermes-world.ai) directly as a tab in your Hermes Agent dashboard.
 
 ## Install
 
@@ -18,11 +18,11 @@ hermes gateway restart
 ## Requirements
 
 - [Hermes Agent](https://github.com/NousResearch/hermes-agent) with dashboard (`hermes dashboard`)
-- [Hermes Workspace](https://github.com/outsourc-e/hermes-workspace) running locally (default: `http://localhost:3001`)
+- Internet access to [hermes-world.ai](https://hermes-world.ai)
 
 ## What it does
 
-Adds a **HermesWorld** tab to the dashboard sidebar that embeds the Workspace playground in embedded mode (`/playground?embed=1`). Auto-detects your Workspace URL on ports 3000–3002, or you can set it manually.
+Adds a **HermesWorld** tab to the dashboard sidebar that embeds the hosted HermesWorld runtime (`https://hermes-world.ai/play/?embed=dashboard`). You can override the base URL in the tiny settings panel if you run a private HermesWorld host.
 
 ## Structure
 
